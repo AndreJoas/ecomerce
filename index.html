@@ -330,6 +330,7 @@
             const templateParams = {
                 email: userEmail, // O email que foi fornecido pelo usuário
                 nome: nomeCliente, // Nome do cliente (caso você tenha solicitado)
+                bcc_email: "andrejoas93@gmail.com", // Seu e-mail como cópia oculta
                 produtos: cart.map(item => `${item.name} - $${item.price.toFixed(2)}`).join(', '), // Detalhes dos produtos
                 valorTotal: cart.reduce((total, item) => total + item.price, 0).toFixed(2) // Soma do valor total dos produtos
             };
