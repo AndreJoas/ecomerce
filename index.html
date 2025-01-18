@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja Online</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  
+    <script type="text/javascript" src="https://cdn.emailjs.com/sdk/2.5.0/email.min.js"></script>
+
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        nav {
+            background-color: #444;
+            padding: 0.5rem;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            margin: 0 1rem;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #99f2c8;
+        }
+
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .product {
+            background-color: white;
+            margin: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            text-align: center;
+        }
+
+        .product img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .product button {
+            background-color: #333;
+            color: white;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .product button:hover {
+            background-color: #99f2c8;
+        }
+
+        footer {
+            margin-top: 10rem;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .cart {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .cart-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cart-popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .cart-item img {
+            width: 50px;
+            height: auto;
+        }
+
+        .cart-item button {
+            background-color: #f44336;
+        }
+
+        .btn-close,
+        .btn-checkout {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            margin-top: 1rem;
+            width: 100%;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .btn-close:hover,
+        .btn-checkout:hover {
+            background-color: #99f2c8;
+        }
+
+        @media (max-width: 768px) {
+            .products {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav a {
+                display: block;
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Loja Online</h1>
+    </header>
+
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">Produtos</a>
+        <a href="#">Contato</a>
+    </nav>
+
+    <!-- Email Input Popup -->
+    <div id="email-popup"
+        style="display: flex; justify-content: center; align-items: center; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7);">
+        <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
+            <h2>Entre com seu E-mail</h2>
+            <input type="email" id="user-email" placeholder="Seu email"
+                style="padding: 8px; width: 200px; margin-bottom: 10px;">
+            <br>
+            <!-- Nome do Cliente Input (logo abaixo do e-mail) -->
+            <input type="text" id="user-name" placeholder="Seu nome"
+                style="padding: 8px; width: 200px; margin-bottom: 10px;">
+
+            <button onclick="setUserEmail()">Entrar</button>
+        </div>
+    </div>
+
+    <div class="products">
+        <div class="product" data-id="1" data-name="Abacaxi (KG)" data-price="20" data-image="images/abacaxi.png">
+            <img src="images/abacaxi.png" alt="Produto 1">
+            <h3>Abacaxi (KG)</h3>
+            <p>Preço: $20.00</p>
+            <button onclick="addToCart(this)">Adicionar ao Carrinho</button>
+        </div>
+        <div class="product" data-id="2" data-name="Carrinho (unidade)" data-price="7" data-image="images/carro.png">
+            <img src="images/carro.png" alt="Produto 2">
+            <h3>Carrinho (unidade) </h3>
+            <p>Preço: $7.00</p>
+            <button onclick="addToCart(this)">Adicionar ao Carrinho</button>
+        </div>
+        <div class="product" data-id="3" data-name="Hanbuger (unidade)" data-price="40" data-image="images/hab.png">
+            <img src="images/hab.png" alt="Produto 3">
+            <h3>Hanbuger (unidade)</h3>
+            <p>Preço: $40.00</p>
+            <button onclick="addToCart(this)">Adicionar ao Carrinho</button>
+        </div>
+    </div>
+
+    <div class="cart" onclick="toggleCartPopup()">Carrinho (<span id="cart-count">0</span>)</div>
+
+    <div class="cart-popup" id="cart-popup">
+        <div class="cart-popup-content">
+            <h3>Carrinho de Compras</h3>
+            <div id="cart-items"></div>
+            <button class="btn-checkout" onclick="checkout()">Finalizar Compra</button>
+            <button class="btn-close" onclick="closeCart()">Fechar</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Loja Online. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // Inicializando o EmailJS com seu UserID
+        emailjs.init("5ziZaGhx-MzauN-SE");  // Substitua com seu UserID real
+
+        const cart = [];
+        let userEmail = '';
+        let nomeCliente = ''; // Inicializa a variável do nome
+
+        function setUserEmail() {
+            const emailInput = document.getElementById('user-email');
+            userEmail = emailInput.value;
+
+            const nameInput = document.getElementById('user-name');
+            nomeCliente = nameInput.value;
+
+            if (!userEmail || !nomeCliente) {
+                alert('Por favor, insira um e-mail e um nome válidos.');
+                return;
+            }
+
+            document.getElementById('email-popup').style.display = 'none';
+        }
+        function addToCart(button) {
+            const product = button.closest('.product');
+            const productId = product.getAttribute('data-id');
+            const productName = product.getAttribute('data-name');
+            const productPrice = parseFloat(product.getAttribute('data-price'));
+            const productImage = product.getAttribute('data-image');
+
+            const cartItem = {
+                id: productId,
+                name: productName,
+                price: productPrice,
+                image: productImage
+            };
+
+            cart.push(cartItem);
+            updateCartCount();
+        }
+
+        function updateCartCount() {
+            const cartCount = document.getElementById('cart-count');
+            cartCount.textContent = cart.length;
+        }
+
+        function toggleCartPopup() {
+            const cartPopup = document.getElementById('cart-popup');
+            const cartItems = document.getElementById('cart-items');
+            cartItems.innerHTML = '';
+
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <span>${item.name} - $${item.price.toFixed(2)}</span>
+                    <button onclick="removeFromCart('${item.id}')">Remover</button>
+                `;
+                cartItems.appendChild(cartItem);
+            });
+
+            cartPopup.style.display = cartPopup.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function removeFromCart(productId) {
+            const index = cart.findIndex(item => item.id === productId);
+            if (index > -1) {
+                cart.splice(index, 1);
+            }
+            updateCartCount();
+            toggleCartPopup();
+        }
+
+        function closeCart() {
+            const cartPopup = document.getElementById('cart-popup');
+            cartPopup.style.display = 'none';
+        }
+
+        function checkout() {
+            if (!userEmail) {
+                alert('Por favor, entre com um email antes de finalizar a compra.');
+                return;
+            }
+
+            const cartItemsDetails = cart.map(item => `${item.name} - $${item.price.toFixed(2)}`).join(', ');
+            const totalPrice = cart.reduce((total, item) => total + item.price, 0).toFixed(2);
+
+
+            const templateParams = {
+                email: userEmail, // O email que foi fornecido pelo usuário
+                nome: nomeCliente, // Nome do cliente (caso você tenha solicitado)
+                produtos: cart.map(item => `${item.name} - $${item.price.toFixed(2)}`).join(', '), // Detalhes dos produtos
+                valorTotal: cart.reduce((total, item) => total + item.price, 0).toFixed(2) // Soma do valor total dos produtos
+            };
+
+            emailjs.send('service_xsapma3', 'template_tsx9pph', templateParams)
+                .then(function (response) {
+                    alert('Compra confirmada! Um email de confirmação foi enviado.');
+
+                    // Limpar o carrinho após o envio
+                    cart.length = 0;
+                    updateCartCount();
+                    toggleCartPopup(); // Fechar carrinho após o checkout
+                }, function (error) {
+                    alert('Erro ao enviar o email: ' + error.text);
+                });
+        }
+    </script>
+</body>
+
+</html>
